@@ -1,0 +1,739 @@
+Person
+    PersonID (INT, Primary Key)
+    Name (VARCHAR)
+    Address (VARCHAR)
+    PhoneNumber (VARCHAR)
+    BirthDate (DATE)
+    EmploymentType (VARCHAR)
+
+Organization
+     OrganizationID (INT, Primary Key)
+     Name (VARCHAR)
+     Address (VARCHAR)
+     PhoneNumber (VARCHAR)
+     BudgetNumber (VARCHAR)
+     Type (VARCHAR)
+
+Employment
+     EmploymentID (INT, Primary Key)
+     PersonID (INT, Foreign Key references Person(PersonID))
+     OrganizationID (INT, Foreign Key references Organization(OrganizationID))
+     EmploymentDate (DATE)
+     TerminationDate (DATE)
+     Bonus (DECIMAL)
+     
+
+Position
+     PositionID (INT, Primary Key)
+     Title (VARCHAR)
+     OrganizationID (INT, Foreign Key references Organization(OrganizationID))
+     
+
+EmploymentPosition
+     EmploymentPositionID (INT, Primary Key)
+     EmploymentID (INT, Foreign Key references Employment(EmploymentID))
+     PositionID (INT, Foreign Key references Position(PositionID))
+     StartDate (DATE)
+     TerminationDate (DATE)
+     Salary (DECIMAL)
+
+
+
+
+mysql> USE TT_HOLDINGS;
+Database changed
+mysql> CREATE TABLE Person (
+    ->     PersonID INT PRIMARY KEY,
+    ->     Name VARCHAR(100),
+    ->     Address VARCHAR(255),
+    ->     PhoneNumber VARCHAR(15),
+    ->     BirthDate DATE,
+    ->     EmploymentType VARCHAR(20) -- Permanent or Part-Time
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> CREATE TABLE Organization (
+    ->     OrganizationID INT PRIMARY KEY,
+    ->     Name VARCHAR(100),
+    ->     Address VARCHAR(255),
+    ->     PhoneNumber VARCHAR(15),
+    ->     BudgetNumber VARCHAR(50),
+    ->     Type VARCHAR(20) -- Internal or External
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Employment (
+    ->     EmploymentID INT PRIMARY KEY,
+    ->     PersonID INT,
+    ->     OrganizationID INT,
+    ->     EmploymentDate DATE,
+    ->     TerminationDate DATE,
+    ->     Bonus DECIMAL(10, 2),
+    ->     FOREIGN KEY (PersonID) REFERENCES Person(PersonID),
+    ->     FOREIGN KEY (OrganizationID) REFERENCES Organization(OrganizationID)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> CREATE TABLE Position (
+    ->     PositionID INT PRIMARY KEY,
+    ->     Title VARCHAR(100),
+    ->     OrganizationID INT,
+    ->     FOREIGN KEY (OrganizationID) REFERENCES Organization(OrganizationID)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+
+mysql> CREATE TABLE EmploymentPosition (
+    ->     EmploymentPositionID INT PRIMARY KEY,
+    ->     EmploymentID INT,
+    ->     PositionID INT,
+    ->     StartDate DATE,
+    ->     TerminationDate DATE,
+    ->     Salary DECIMAL(10, 2),
+    ->     FOREIGN KEY (EmploymentID) REFERENCES Employment(EmploymentID),
+    ->     FOREIGN KEY (PositionID) REFERENCES `Position`(PositionID)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> show tables;
++-----------------------+
+| Tables_in_tt_holdings |
++-----------------------+
+| employment            |
+| employmentposition    |
+| organization          |
+| person                |
+| position              |
++-----------------------+
+5 rows in set (0.04 sec)
+
+mysql> INSERT INTO Person (PersonID, Name, Address, PhoneNumber, BirthDate, EmploymentType) VALUES
+    -> (1, 'Thabo Mokoena', '123 Seforong St, Botha-Bothe', '123-456-7890', '1989-10-15', 'Permanent'),
+    -> (2, 'Mokhonoana Maqhawe', '456 Hloahloeng St, Leribe', '234-567-8901', '1985-06-20', 'Part-Time'),
+    -> (3, 'Lerato Ntsoai', '789 Ntšekoane St, Botha-Bothe', '345-678-9012', '1992-11-30', 'Permanent'),
+    -> (4, 'Palesa Makhetha', '159 Sehlabathebe Ave, Leribe', '456-789-0123', '1988-03-10', 'Part-Time'),
+    -> (5, 'Kabelo Mothibe', '753 Linare Blvd, Botha-Bothe', '567-890-1234', '1995-07-24', 'Permanent'),
+    -> (6, 'Ntsiki Habedi', '321 Matlapaneng Rd, Leribe', '678-901-2345', '1983-12-05', 'Permanent'),
+    -> (7, 'Teboho Tšiu', '103 Mohokare St, Botha-Bothe', '789-012-3456', '1978-05-15', 'Part-Time'),
+    -> (8, 'Relebohile Nkhahle', '456 Ha Matšela St, Leribe', '890-123-4567', '1991-02-01', 'Permanent'),
+    -> (9, 'Letsoela Khomo', '789 Thaba Bosiu St, Botha-Bothe', '901-234-5678', '1994-03-12', 'Part-Time'),
+    -> (10, 'Dineo Mohale', '159 Leribe Ct, Leribe', '012-345-6789', '1990-11-28', 'Permanent'),
+    -> (11, 'Khotso Maema', '753 Tšoanelo Dr, Botha-Bothe', '123-456-7890', '1995-04-17', 'Permanent'),
+    -> (12, 'Litha Mothibe', '258 Molapo St, Leribe', '124-567-8901', '1998-09-22', 'Part-Time');
+Query OK, 12 rows affected (0.01 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+
+mysql> INSERT INTO Organization (Name, Address, PhoneNumber, BudgetNumber, Type) VALUES
+    -> ('TechCorp', '321 Tech Drive, Maseru', '555-1234', 'BC0021', 'Internal'),
+    -> ('Health Inc', '654 Wellness Way, Maseru', '555-5678', 'BC0022', 'External'),
+    -> ('EduWorld', '987 Learning Ln, Maseru', '555-9101', 'BC0023', 'Internal'),
+    -> ('Retail Co.', '111 Market St, Maseru', '555-1314', 'BC0024', 'External'),
+    -> ('Construction Plus', '222 Builder Blvd, Maseru', '555-2222', 'BC0025', 'Internal'),
+    -> ('Agriculture Solutions', '777 Farm Rd, Maseru', '555-3333', 'BC0026', 'External'),
+    -> ('Digital Hub', '456 Innovation Ave, Maseru', '555-4444', 'BC0027', 'Internal'),
+    -> ('Finance Experts', '888 Accounting Ln, Maseru', '555-5555', 'BC0028', 'External'),
+    -> ('Transport Services', '999 Transit Rd, Maseru', '555-6666', 'BC0029', 'Internal'),
+    -> ('Hospitality Group', '123 Service Ct, Maseru', '555-7777', 'BC0030', 'External'),
+    -> ('Research Institute', '444 Science St, Maseru', '555-8888', 'BC0031', 'Internal');
+Query OK, 11 rows affected (0.01 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+
+
+mysql> INSERT INTO Employment (PersonID, OrganizationID, EmploymentDate, TerminationDate, Bonus) VALUES
+    -> (1, 1, '2021-01-15', NULL, 5000.00),
+    -> (2, 1, '2019-03-01', NULL, 1500.00),
+    -> (3, 2, '2021-06-01', '2022-01-01', 3000.00),
+    -> (4, 2, '2020-12-15', NULL, 2000.00),
+    -> (5, 1, '2018-08-01', NULL, 1000.00),
+    -> (6, 3, '2019-09-01', NULL, 750.00),
+    -> (7, 2, '2020-05-10', NULL, 2000.00),
+    -> (8, 1, '2021-04-22', NULL, 2800.00),
+    -> (9, 4, '2022-01-05', NULL, 1200.00),
+    -> (10, 3, '2023-02-01', NULL, 1800.00),
+    -> (11, 1, '2023-03-01', NULL, 1500.00);
+Query OK, 11 rows affected (0.01 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Position (Title, OrganizationID) VALUES
+    -> ('Software Engineer', 1),
+    -> ('Data Analyst', 1),
+    -> ('Healthcare Manager', 2),
+    -> ('HR Manager', 1),
+    -> ('Professor', 3),
+    -> ('Sales Associate', 4),
+    -> ('Building Manager', 2),
+    -> ('Web Developer', 1),
+    -> ('Operations Supervisor', 3),
+    -> ('Customer Service Rep', 4),
+    -> ('Project Coordinator', 1);
+Query OK, 11 rows affected (0.01 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+
+
+mysql> INSERT INTO EmploymentPosition (EmploymentID, PositionID, StartDate, TerminationDate, Salary) VALUES
+    -> (1, 1, '2021-01-15', NULL, 70000.00),
+    -> (2, 2, '2019-03-01', NULL, 60000.00),
+    -> (3, 3, '2021-06-01', NULL, 80000.00),
+    -> (4, 4, '2020-12-15', NULL, 85000.00),
+    -> (5, 1, '2018-08-01', NULL, 72000.00),
+    -> (6, 5, '2019-09-01', NULL, 75000.00),
+    -> (7, 6, '2020-05-10', NULL, 40000.00),
+    -> (8, 1, '2021-04-22', NULL, 70000.00),
+    -> (9, 7, '2023-06-01', NULL, 50000.00),
+    -> (10, 8, '2023-08-15', NULL, 60000.00),
+    -> (11, 9, '2022-05-12', NULL, 65000.00);
+Query OK, 11 rows affected (0.01 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+mysql> show tables;
++-----------------------+
+| Tables_in_tt_holdings |
++-----------------------+
+| employment            |
+| employmentposition    |
+| organization          |
+| person                |
+| position              |
++-----------------------+
+5 rows in set (0.00 sec)
+
+
+mysql> select * from person;
++----------+--------------------+---------------------------------+--------------+------------+----------------+
+| PersonID | Name               | Address                         | PhoneNumber  | BirthDate  | EmploymentType |
++----------+--------------------+---------------------------------+--------------+------------+----------------+
+|        1 | Thabo Mokoena      | 123 Seforong St, Botha-Bothe    | 123-456-7890 | 1989-10-15 | Permanent      |
+|        2 | Mokhonoana Maqhawe | 456 Hloahloeng St, Leribe       | 234-567-8901 | 1985-06-20 | Part-Time      |
+|        3 | Lerato Ntsoai      | 789 Nt?ekoane St, Botha-Bothe   | 345-678-9012 | 1992-11-30 | Permanent      |
+|        4 | Palesa Makhetha    | 159 Sehlabathebe Ave, Leribe    | 456-789-0123 | 1988-03-10 | Part-Time      |
+|        5 | Kabelo Mothibe     | 753 Linare Blvd, Botha-Bothe    | 567-890-1234 | 1995-07-24 | Permanent      |
+|        6 | Ntsiki Habedi      | 321 Matlapaneng Rd, Leribe      | 678-901-2345 | 1983-12-05 | Permanent      |
+|        7 | Teboho T?iu        | 103 Mohokare St, Botha-Bothe    | 789-012-3456 | 1978-05-15 | Part-Time      |
+|        8 | Relebohile Nkhahle | 456 Ha Mat?ela St, Leribe       | 890-123-4567 | 1991-02-01 | Permanent      |
+|        9 | Letsoela Khomo     | 789 Thaba Bosiu St, Botha-Bothe | 901-234-5678 | 1994-03-12 | Part-Time      |
+|       10 | Dineo Mohale       | 159 Leribe Ct, Leribe           | 012-345-6789 | 1990-11-28 | Permanent      |
+|       11 | Khotso Maema       | 753 T?oanelo Dr, Botha-Bothe    | 123-456-7890 | 1995-04-17 | Permanent      |
+|       12 | Litha Mothibe      | 258 Molapo St, Leribe           | 124-567-8901 | 1998-09-22 | Part-Time      |
++----------+--------------------+---------------------------------+--------------+------------+----------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from position;
++------------+-----------------------+----------------+
+| PositionID | Title                 | OrganizationID |
++------------+-----------------------+----------------+
+|          1 | Software Engineer     |              1 |
+|          2 | Data Analyst          |              1 |
+|          3 | Healthcare Manager    |              2 |
+|          4 | HR Manager            |              1 |
+|          5 | Professor             |              3 |
+|          6 | Sales Associate       |              4 |
+|          7 | Building Manager      |              2 |
+|          8 | Web Developer         |              1 |
+|          9 | Operations Supervisor |              3 |
+|         10 | Customer Service Rep  |              4 |
+|         11 | Project Coordinator   |              1 |
++------------+-----------------------+----------------+
+11 rows in set (0.00 sec)
+
+mysql> select * from organization;
++----------------+-----------------------+----------------------------+-------------+--------------+----------+
+| OrganizationID | Name                  | Address                    | PhoneNumber | BudgetNumber | Type     |
++----------------+-----------------------+----------------------------+-------------+--------------+----------+
+|              1 | TechCorp              | 321 Tech Drive, Maseru     | 555-1234    | BC0021       | Internal |
+|              2 | Health Inc            | 654 Wellness Way, Maseru   | 555-5678    | BC0022       | External |
+|              3 | EduWorld              | 987 Learning Ln, Maseru    | 555-9101    | BC0023       | Internal |
+|              4 | Retail Co.            | 111 Market St, Maseru      | 555-1314    | BC0024       | External |
+|              5 | Construction Plus     | 222 Builder Blvd, Maseru   | 555-2222    | BC0025       | Internal |
+|              6 | Agriculture Solutions | 777 Farm Rd, Maseru        | 555-3333    | BC0026       | External |
+|              7 | Digital Hub           | 456 Innovation Ave, Maseru | 555-4444    | BC0027       | Internal |
+|              8 | Finance Experts       | 888 Accounting Ln, Maseru  | 555-5555    | BC0028       | External |
+|              9 | Transport Services    | 999 Transit Rd, Maseru     | 555-6666    | BC0029       | Internal |
+|             10 | Hospitality Group     | 123 Service Ct, Maseru     | 555-7777    | BC0030       | External |
+|             11 | Research Institute    | 444 Science St, Maseru     | 555-8888    | BC0031       | Internal |
++----------------+-----------------------+----------------------------+-------------+--------------+----------+
+11 rows in set (0.00 sec)
+
+mysql> select * from employmentposition;
++----------------------+--------------+------------+------------+-----------------+----------+
+| EmploymentPositionID | EmploymentID | PositionID | StartDate  | TerminationDate | Salary   |
++----------------------+--------------+------------+------------+-----------------+----------+
+|                    1 |            1 |          1 | 2021-01-15 | NULL            | 70000.00 |
+|                    2 |            2 |          2 | 2019-03-01 | NULL            | 60000.00 |
+|                    3 |            3 |          3 | 2021-06-01 | NULL            | 80000.00 |
+|                    4 |            4 |          4 | 2020-12-15 | NULL            | 85000.00 |
+|                    5 |            5 |          1 | 2018-08-01 | NULL            | 72000.00 |
+|                    6 |            6 |          5 | 2019-09-01 | NULL            | 75000.00 |
+|                    7 |            7 |          6 | 2020-05-10 | NULL            | 40000.00 |
+|                    8 |            8 |          1 | 2021-04-22 | NULL            | 70000.00 |
+|                    9 |            9 |          7 | 2023-06-01 | NULL            | 50000.00 |
+|                   10 |           10 |          8 | 2023-08-15 | NULL            | 60000.00 |
+|                   11 |           11 |          9 | 2022-05-12 | NULL            | 65000.00 |
++----------------------+--------------+------------+------------+-----------------+----------+
+11 rows in set (0.00 sec)
+
+mysql> select * from employment;
++--------------+----------+----------------+----------------+-----------------+---------+
+| EmploymentID | PersonID | OrganizationID | EmploymentDate | TerminationDate | Bonus   |
++--------------+----------+----------------+----------------+-----------------+---------+
+|            1 |        1 |              1 | 2021-01-15     | NULL            | 5000.00 |
+|            2 |        2 |              1 | 2019-03-01     | NULL            | 1500.00 |
+|            3 |        3 |              2 | 2021-06-01     | 2022-01-01      | 3000.00 |
+|            4 |        4 |              2 | 2020-12-15     | NULL            | 2000.00 |
+|            5 |        5 |              1 | 2018-08-01     | NULL            | 1000.00 |
+|            6 |        6 |              3 | 2019-09-01     | NULL            |  750.00 |
+|            7 |        7 |              2 | 2020-05-10     | NULL            | 2000.00 |
+|            8 |        8 |              1 | 2021-04-22     | NULL            | 2800.00 |
+|            9 |        9 |              4 | 2022-01-05     | NULL            | 1200.00 |
+|           10 |       10 |              3 | 2023-02-01     | NULL            | 1800.00 |
+|           11 |       11 |              1 | 2023-03-01     | NULL            | 1500.00 |
++--------------+----------+----------------+----------------+-----------------+---------+
+11 rows in set (0.00 sec)
+
+mysql>
+
+mysql> CREATE VIEW View_Person_Permanent AS
+    -> SELECT * FROM Person
+    -> WHERE EmploymentType = 'Permanent';
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW View_Person_PartTime AS
+    -> SELECT * FROM Person
+    -> WHERE EmploymentType = 'Part-Time';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW View_Organization_Internal AS
+    -> SELECT * FROM Organization
+    -> WHERE Type = 'Internal';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW View_Organization_External AS
+    -> SELECT * FROM Organization
+    -> WHERE Type = 'External';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW View_Employment_Active AS
+    -> SELECT * FROM Employment
+    -> WHERE TerminationDate IS NULL;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> CREATE VIEW View_Employment_Terminated AS
+    -> SELECT * FROM Employment
+    -> WHERE TerminationDate IS NOT NULL;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE VIEW View_Position_Internal AS
+    -> SELECT * FROM Position
+    -> WHERE OrganizationID IN (SELECT OrganizationID FROM Organization WHERE Type = 'Internal');
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> CREATE VIEW View_Position_External AS
+    -> SELECT * FROM Position
+    -> WHERE OrganizationID IN (SELECT OrganizationID FROM Organization WHERE Type = 'External');
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW View_EmploymentPosition_HighSalary AS
+    -> SELECT * FROM EmploymentPosition
+    -> WHERE Salary > 60000;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE VIEW View_EmploymentPosition_LowSalary AS
+    -> SELECT * FROM EmploymentPosition
+    -> WHERE Salary <= 60000;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SHOW FULL TABLES IN TT_HOLDINGS WHERE TABLE_TYPE LIKE 'VIEW';
++------------------------------------+------------+
+| Tables_in_tt_holdings              | Table_type |
++------------------------------------+------------+
+| view_employment_active             | VIEW       |
+| view_employment_terminated         | VIEW       |
+| view_employmentposition_highsalary | VIEW       |
+| view_employmentposition_lowsalary  | VIEW       |
+| view_organization_external         | VIEW       |
+| view_organization_internal         | VIEW       |
+| view_person_parttime               | VIEW       |
+| view_person_permanent              | VIEW       |
+| view_position_external             | VIEW       |
+| view_position_internal             | VIEW       |
++------------------------------------+------------+
+10 rows in set (0.01 sec)
+
+mysql> SELECT TABLE_NAME
+    -> FROM INFORMATION_SCHEMA.VIEWS
+    -> WHERE TABLE_SCHEMA = 'TT_HOLDINGS';
++------------------------------------+
+| TABLE_NAME                         |
++------------------------------------+
+| view_person_permanent              |
+| view_person_parttime               |
+| view_organization_internal         |
+| view_organization_external         |
+| view_employment_active             |
+| view_employment_terminated         |
+| view_position_internal             |
+| view_position_external             |
+| view_employmentposition_highsalary |
+| view_employmentposition_lowsalary  |
++------------------------------------+
+10 rows in set (0.01 sec)
+
+mysql>mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_organization_insert1
+    -> AFTER INSERT ON Organization
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('New organization added: ', NEW.Name));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_organization_insert2
+    -> AFTER INSERT ON Organization
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_organization (OrganizationID, Action) VALUES (NEW.OrganizationID, 'Inserted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_organization_update1
+    -> AFTER UPDATE ON Organization
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Organization updated: ', OLD.Name, ' to ', NEW.Name));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_organization_update2
+    -> AFTER UPDATE ON Organization
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_organization (OrganizationID, OldName, NewName, Action) VALUES (OLD.OrganizationID, OLD.Name, NEW.Name, 'Updated');
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_organization_delete1
+    -> AFTER DELETE ON Organization
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Organization deleted: ', OLD.Name));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_organization_delete2
+    -> AFTER DELETE ON Organization
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_organization (OrganizationID, Action) VALUES (OLD.OrganizationID, 'Deleted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_person_insert1
+    -> AFTER INSERT ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('New person added: ', NEW.Name));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_person_insert2
+    -> AFTER INSERT ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_person (PersonID, Action) VALUES (NEW.PersonID, 'Inserted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_person_update1
+    -> AFTER UPDATE ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Person updated: ', OLD.Name, ' to ', NEW.Name));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_person_update2
+    -> AFTER UPDATE ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_person (PersonID, OldName, NewName, Action) VALUES (OLD.PersonID, OLD.Name, NEW.Name, 'Updated');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_person_delete1
+    -> AFTER DELETE ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Person deleted: ', OLD.Name));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_person_delete2
+    -> AFTER DELETE ON Person
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_person (PersonID, Action) VALUES (OLD.PersonID, 'Deleted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_employment_insert1
+    -> AFTER INSERT ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('New employment entry added for: ', NEW.PersonID));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_employment_insert2
+    -> AFTER INSERT ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_employment (EmploymentID, PersonID, Action) VALUES (NEW.EmploymentID, NEW.PersonID, 'Inserted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employment_update1
+    -> AFTER UPDATE ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Employment updated: PersonID ', OLD.PersonID));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employment_update2
+    -> AFTER UPDATE ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_employment (EmploymentID, OldBonus, NewBonus, Action) VALUES (OLD.EmploymentID, OLD.Bonus, NEW.Bonus, 'Updated');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employment_delete1
+    -> AFTER DELETE ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Employment entry deleted for: ', OLD.PersonID));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employment_delete2
+    -> AFTER DELETE ON Employment
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_employment (EmploymentID, PersonID, Action) VALUES (OLD.EmploymentID, OLD.PersonID, 'Deleted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_position_insert1
+    -> AFTER INSERT ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('New position added: ', NEW.Title));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_position_insert2
+    -> AFTER INSERT ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_position (PositionID, Action) VALUES (NEW.PositionID, 'Inserted');
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_position_update1
+    -> AFTER UPDATE ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Position updated: ', OLD.Title, ' to ', NEW.Title));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_position_update2
+    -> AFTER UPDATE ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_position (PositionID, OldTitle, NewTitle, Action) VALUES (OLD.PositionID, OLD.Title, NEW.Title, 'Updated');
+    -> END; //
+Query OK, 0 rows affected (0.03 sec)
+
+mysql>
+mysql> CREATE TRIGGER trg_position_delete1
+    -> AFTER DELETE ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Position deleted: ', OLD.Title));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_position_delete2
+    -> AFTER DELETE ON Position
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_position (PositionID, Action) VALUES (OLD.PositionID, 'Deleted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+mysql>mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_employmentposition_insert1
+    -> AFTER INSERT ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('New employment position entry added for EmploymentID: ', NEW.EmploymentID));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employmentposition_insert2
+    -> AFTER INSERT ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_employmentposition (EmploymentPositionID, Action) VALUES (NEW.EmploymentPositionID, 'Inserted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employmentposition_update1
+    -> AFTER UPDATE ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Employment position updated for EmploymentID: ', OLD.EmploymentID));
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+
+mysql> CREATE TRIGGER trg_employmentposition_update2
+    -> AFTER UPDATE ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_employmentposition (EmploymentPositionID, OldEmploymentID, NewEmploymentID, Action)
+    ->     VALUES (OLD.EmploymentPositionID, OLD.EmploymentID, NEW.EmploymentID, 'Updated');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER trg_employmentposition_delete1
+    -> AFTER DELETE ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Employment position entry deleted for EmploymentID: ', OLD.EmploymentID));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TRIGGER trg_employmentposition_delete2
+    -> AFTER DELETE ON EmploymentPosition
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO audit_employmentposition (EmploymentPositionID, Action) VALUES (OLD.EmploymentPositionID, 'Deleted');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+
+
+
+
+mysql>mysql> DELIMITER //
+mysql> CREATE FUNCTION GetFullName(PersonID INT)
+    -> RETURNS VARCHAR(255)
+    -> DETERMINISTIC
+    -> READS SQL DATA
+    -> BEGIN
+    ->     DECLARE fullName VARCHAR(255);
+    ->
+    ->     SELECT CONCAT(FirstName, ' ', LastName) INTO fullName
+    ->     FROM Person
+    ->     WHERE PersonID = PersonID;
+    ->
+    ->     RETURN fullName;
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE FUNCTION CountEmployees(OrganizationID INT)
+    -> RETURNS INT
+    -> DETERMINISTIC
+    -> READS SQL DATA
+    -> BEGIN
+    ->     DECLARE employeeCount INT;
+    ->
+    ->     SELECT COUNT(*) INTO employeeCount
+    ->     FROM Employment
+    ->     WHERE OrganizationID = OrganizationID;  -- Ensure the OrganizationID column is correct
+    ->
+    ->     RETURN employeeCount;
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+
+
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE AddNewPerson(
+    ->     IN FirstName VARCHAR(50),
+    ->     IN LastName VARCHAR(50)
+    -> )
+    -> BEGIN
+    ->     INSERT INTO Person (FirstName, LastName) VALUES (FirstName, LastName);
+    ->
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('New person added: ', FirstName, ' ', LastName));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE UpdatePersonPosition(
+    ->     IN PersonID INT,
+    ->     IN NewPositionID INT
+    -> )
+    -> BEGIN
+    ->     UPDATE Employment
+    ->     SET PositionID = NewPositionID
+    ->     WHERE PersonID = PersonID;
+    ->
+    ->     INSERT INTO logs (log_message) VALUES (CONCAT('Updated position for PersonID: ', PersonID, ' to PositionID: ', NewPositionID));
+    -> END; //
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> CREATE USER 'moropane'@'localhost' IDENTIFIED BY 'moropane123';
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> GRANT SELECT, INSERT ON your_database_name.* TO 'limpho'@'localhost';
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT SELECT, INSERT ON your_database_name.* TO 'moropane'@'localhost';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT User, Host FROM mysql.user;
++------------------+-----------+
+| User             | Host      |
++------------------+-----------+
+| limpho           | localhost |
+| moropane         | localhost |
+| mysql.infoschema | localhost |
+| mysql.session    | localhost |
+| mysql.sys        | localhost |
+| root             | localhost |
++------------------+-----------+
+6 rows in set (0.00 sec)
+
+
+mysql> SHOW GRANTS FOR 'limpho'@'localhost';
++------------------------------------------------------------------------+
+| Grants for limpho@localhost                                            |
++------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `limpho`@`localhost`                             |
+| GRANT SELECT, INSERT ON `your_database_name`.* TO `limpho`@`localhost` |
++------------------------------------------------------------------------+
+2 rows in set (0.01 sec)
+
+mysql> SHOW GRANTS FOR 'moropane'@'localhost';
